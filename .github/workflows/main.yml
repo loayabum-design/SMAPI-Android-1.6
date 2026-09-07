@@ -11,22 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-
-      - name: Install Android Workload
-        run: dotnet workload install android
-
-      - name: Build Android Patcher
+      - name: List All Projects
         run: |
-          FILE=$(find . -iname "*AndroidPatcher.csproj" | head -n 1)
-          echo "Found project: $FILE"
-          dotnet build "$FILE" -c Release
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AndroidPatcher-DLL
-          path: '**/*StardewModdingAPI.Mobile.AndroidPatcher.dll'
+          echo "=== All csproj files in repository ==="
+          find . -name "*.csproj"
