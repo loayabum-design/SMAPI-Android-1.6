@@ -1,36 +1,31 @@
-name: Build Patcher DLL
+name: Build SMAPI-Android
 
 on:
   push:
-    branches: [ develop, master ]
-  workflow_dispatch:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Extract Dependencies
-        run: |
-          mkdir -p ./src/DependenciesDll
-          ARCHIVE=$(find . -maxdepth 4 -type f \( -name "*.7z" -o -name "*.zip" -o -name "*libs*" \) | head -n 1)
-          echo "Found file at: $ARCHIVE"
-          7z x "$ARCHIVE" -o./src/DependenciesDll/ -y
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '6.0.x'
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
+    - name: Merge and Extract Dependencies
+      run: |
+        cd src/DependenciesDll
+        cat libs.zip.* > libs.zip
+        unzip -o libs.zip -d .
+        rm libs.zip
 
-      - name: Install Android Workload
-        run: dotnet workload install android
-
-      - name: Build SMAPI Project
-        run: dotnet build ./src/SMAPI/SMAPI.csproj -c Release /p:GamePath="../DependenciesDll"
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AndroidPatcher-DLL
-          path: '**/StardewModdingAPI.Mobile.AndroidPatcher.dll'
+    - name: Build with dotnet
+      run: |
+        dotnet build -c Release
