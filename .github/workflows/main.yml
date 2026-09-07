@@ -11,7 +11,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: List Directory Structure
+      - name: Extract Dependencies
         run: |
-          echo "=== All Directories ==="
-          find . -maxdepth 3 -not -path '*/.*'
+          mkdir -p ./src/DependenciesDll
+          unzip -o ./src/DependenciesDll/libs.zip -d ./src/DependenciesDll/
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install Android Workload
+        run: dotnet workload install android
+
+      - name: Build SMAPI Project
+        run: dotnet build ./src/SMAPI/SMAPI.csproj -c Release /p:GamePath="../DependenciesDll"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AndroidPatcher-DLL
+          path: '**/StardewModdingAPI.Mobile.AndroidPatcher.dll'
