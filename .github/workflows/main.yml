@@ -27,4 +27,4 @@ jobs:
 
     - name: Build with dotnet
       run: |
-        dotnet build -c Release
+        dotnet build src/SMAPI.Android.sln -c Release
