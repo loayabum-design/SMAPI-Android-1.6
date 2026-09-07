@@ -14,9 +14,9 @@ jobs:
       - name: Extract Dependencies
         run: |
           mkdir -p ./src/DependenciesDll
-          ZIP_FILE=$(find . -maxdepth 3 -iname "*libs*.zip" | head -n 1)
-          echo "Found zip file at: $ZIP_FILE"
-          unzip -o "$ZIP_FILE" -d ./src/DependenciesDll/
+          ARCHIVE=$(find . -maxdepth 4 -type f \( -name "*.7z" -o -name "*.zip" -o -name "*libs*" \) | head -n 1)
+          echo "Found file at: $ARCHIVE"
+          7z x "$ARCHIVE" -o./src/DependenciesDll/ -y
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
