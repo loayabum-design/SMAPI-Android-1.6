@@ -16,6 +16,9 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Install Android Workload
+        run: dotnet workload install android
+
       - name: Build Android Patcher
         run: |
           PATCHER_PATH=$(find . -name "*AndroidPatcher.csproj" | head -n 1)
